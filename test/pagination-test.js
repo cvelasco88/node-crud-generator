@@ -11,7 +11,12 @@ describe('Pagination: index', function() {
 
 	var CrudGenerator = require('../index');
 	var model = require('./fixtures/model');
-	var crud = new CrudGenerator(model);
+	var options = {
+		pagination: {
+			perPage: 25 // custom pagination limit for this generator
+		}
+	};
+	var crud = new CrudGenerator(model, options);
 	var fixtureData = [];
 
 	// Create some fixture data to test pagination
@@ -19,7 +24,7 @@ describe('Pagination: index', function() {
 		async.timesSeries(50, createRandomDocument, done)
 	});
 
-	it('should paginate 20 items by default', function(done) {
+	it('should paginate 25 (our custom setting)', function(done) {
 		var handler = crud.index();
 		app.get('/', handler);
 
@@ -31,7 +36,7 @@ describe('Pagination: index', function() {
 			if (err) { throw err; }
 			var json = res.body;
 			json.should.be.an.Array;
-			json.should.have.length(20);
+			json.should.have.length(25);
 			done();
 		});
 	});
@@ -71,13 +76,11 @@ describe('Pagination: index', function() {
 		.end(function(err, res) {
 			if (err) { throw err; }
 			var json = res.body;
-			var expectedResponseLength = 20; // 50 total, perPage 30, page 2
 			json.should.be.an.Array;
 			json.should.have.length(pagination.perPage);
 			done();
 		});
 	});
-	it('should change the default paginate value when passed as an option');
 
 	function createRandomDocument(n, callback) {
 		var data = {
