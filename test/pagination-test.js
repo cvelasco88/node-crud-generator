@@ -42,7 +42,7 @@ describe('Pagination: index', function() {
 	});
 	it('should paginate by length of perPage option in query params if provided', function(done) {
 		var handler = crud.index();
-		var pagination ={
+		var pagination = {
 			perPage: 30
 		};
 		app.get('/', handler);
@@ -61,7 +61,7 @@ describe('Pagination: index', function() {
 		});
 	});
 	it('should paginate by length of perPage and page option in query params if provided', function(done) {
-		var pagination ={
+		var pagination = {
 			perPage: 30,
 			page: 2
 		};
@@ -80,6 +80,38 @@ describe('Pagination: index', function() {
 			json.should.have.length(pagination.perPage);
 			done();
 		});
+	});
+
+	it('should include last and next header links if not the last page of pagination', function(done) {
+		var pagination = {
+			perPage: 30,
+			page: 1
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		// assert that rel next and last are present in the link string
+		.expect('Link', /(rel="next").*(rel="last")/ig, done); // http://www.regexr.com/3a5p9
+	});
+
+	it('should include prev header links if not the last page of pagination', function(done) {
+		var pagination = {
+			perPage: 30,
+			page: 2
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		// assert that rel next and last are present in the link string
+		.expect('Link', /(rel="prev")/ig, done);
 	});
 
 	function createRandomDocument(n, callback) {
