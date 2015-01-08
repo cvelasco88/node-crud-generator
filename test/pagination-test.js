@@ -21,7 +21,9 @@ describe('Pagination: index', function() {
 
 	// Create some fixture data to test pagination
 	before(function(done) {
-		async.timesSeries(50, createRandomDocument, done)
+		model.remove(function() {
+			async.timesSeries(50, createRandomDocument, done)
+		});
 	});
 
 	it('should paginate 25 (our custom setting)', function(done) {
@@ -63,7 +65,7 @@ describe('Pagination: index', function() {
 	it('should paginate by length of perPage and page option in query params if provided', function(done) {
 		var pagination = {
 			perPage: 30,
-			page: 2
+			page: 1
 		};
 		var handler = crud.index();
 		app.get('/', handler);
