@@ -21,7 +21,9 @@ describe('Pagination: index', function() {
 
 	// Create some fixture data to test pagination
 	before(function(done) {
-		async.timesSeries(50, createRandomDocument, done)
+		model.remove(function() {
+			async.timesSeries(50, createRandomDocument, done)
+		});
 	});
 
 	it('should paginate 25 (our custom setting)', function(done) {
@@ -42,7 +44,7 @@ describe('Pagination: index', function() {
 	});
 	it('should paginate by length of perPage option in query params if provided', function(done) {
 		var handler = crud.index();
-		var pagination ={
+		var pagination = {
 			perPage: 30
 		};
 		app.get('/', handler);
@@ -61,9 +63,9 @@ describe('Pagination: index', function() {
 		});
 	});
 	it('should paginate by length of perPage and page option in query params if provided', function(done) {
-		var pagination ={
+		var pagination = {
 			perPage: 30,
-			page: 2
+			page: 1
 		};
 		var handler = crud.index();
 		app.get('/', handler);
@@ -80,6 +82,83 @@ describe('Pagination: index', function() {
 			json.should.have.length(pagination.perPage);
 			done();
 		});
+	});
+
+	it('should include last and next header links if not the last page of pagination', function(done) {
+		var pagination = {
+			perPage: 30,
+			page: 1
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		// assert that rel next and last are present in the link string
+		.expect('Link', /(rel="next").*(rel="last")/ig, done); // http://www.regexr.com/3a5p9
+	});
+
+	it('should not include last and next header links if last page', function(done) {
+		var pagination = {
+			perPage: 30,
+			page: 2
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		.expect('Link', /^((?!next).)*$/i)
+		.expect('Link', /^((?!last).)*$/i, done);
+	});
+
+	it('should include prev header links if not the first page of pagination', function(done) {
+		var pagination = {
+			perPage: 30,
+			page: 2
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		.expect('Link', /(rel="prev")/ig, done);
+	});
+
+	it('should not include prev header links if first page of pagination', function(done) {
+		var pagination = {
+			perPage: 30,
+			page: 1
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		.expect('Link', /^((?!prev).)*$/i, done);
+	});
+
+	it('should not include pagination links if page count is 1', function(done) {
+		var pagination = {
+			perPage: 9999,
+			page: 1
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		.expect('Link', '', done);
 	});
 
 	function createRandomDocument(n, callback) {
