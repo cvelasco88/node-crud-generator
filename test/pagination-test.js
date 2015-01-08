@@ -100,6 +100,21 @@ describe('Pagination: index', function() {
 		.expect('Link', /(rel="next").*(rel="last")/ig, done); // http://www.regexr.com/3a5p9
 	});
 
+	it('should not include last and next header links if last page', function(done) {
+		var pagination = {
+			perPage: 30,
+			page: 2
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		.expect('Link', '</?page=1>; rel="prev"', done);
+	});
+
 	it('should include prev header links if not the last page of pagination', function(done) {
 		var pagination = {
 			perPage: 30,
