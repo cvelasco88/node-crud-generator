@@ -114,6 +114,22 @@ describe('Pagination: index', function() {
 		.expect('Link', /(rel="prev")/ig, done);
 	});
 
+	it('should not include pagination links if page count is 1', function(done) {
+		var pagination = {
+			perPage: 9999,
+			page: 1
+		};
+		var handler = crud.index();
+		app.get('/', handler);
+
+		request(app)
+		.get('/')
+		.query(pagination)
+		.expect('Content-Type', /json/)
+		// assert that rel next and last are present in the link string
+		.expect('Link', '', done);
+	});
+
 	function createRandomDocument(n, callback) {
 		var data = {
 			description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
