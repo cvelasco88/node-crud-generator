@@ -44,7 +44,7 @@ describe('CustomError: index', function() {
             });
     });
 
-    it.only('should sort documents in descending order by number.', function(done) {
+    it('should sort documents in descending order by number.', function(done) {
         var handler = crud.index();
         app.get('/', handler, function(err, req, res, next) {
             done();
