@@ -64,13 +64,26 @@ crud.all().extend(controller);
 
 module.exports = controller;
 ````
-
 ### Pagination
 
 You can control pagination of data returned from the CRUD index method by passing options as query params. The 2 options available are:
 
 * **perPage**: Controls how many documents are returned for each page
 * **page**: Controls which page to show in conjuntion with the perPage option
+
+## Sorting
+
+A query string, given a sort key, will set the sort order.
+
+A `-` prefix can be used to specify decending order.
+
+Sort fields can be chained using `+`.
+
+#### Example
+
+`/?sort=-name`: Sorts by name in decending order.
+
+`/?sort=name+-date`: Sorts by name in ascending order and date in decending order.
 
 ## Filtering
 
