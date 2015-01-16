@@ -6,7 +6,7 @@ require('./lib/mongoose-connection');
 
 var app = express();
 
-describe('CustomError: index', function() {
+describe('Sort: index', function() {
     var CrudGenerator = require('../index');
     var model = require('./fixtures/model');
     var fixtureData = [];
@@ -19,7 +19,7 @@ describe('CustomError: index', function() {
         });
     });
 
-    it('should sort documents in ascending order by number.', function(done) {
+    it('should sort by "field" ascending.', function(done) {
         var handler = crud.index();
         app.get('/', handler, function(err, req, res, next) {
             done();
@@ -44,7 +44,7 @@ describe('CustomError: index', function() {
             });
     });
 
-    it('should sort documents in descending order by number.', function(done) {
+    it('should sort by "field" descending.', function(done) {
         var handler = crud.index();
         app.get('/', handler, function(err, req, res, next) {
             done();
