@@ -27,7 +27,8 @@ describe('Sort: index', function() {
         });
 
         request(app)
-            .get('/?sort=number')
+            .get('/')
+            .query({ sort: 'number' })
             .expect(200, function(err, res) {
                 should.not.exist(err);
 
@@ -52,7 +53,8 @@ describe('Sort: index', function() {
         });
 
         request(app)
-            .get('/?sort=-number')
+            .get('/')
+            .query({ sort: '-number' })
             .expect(200, function(err, res) {
                 should.not.exist(err);
 
