@@ -77,13 +77,13 @@ A query string, given a sort key, will set the sort order.
 
 A `-` prefix can be used to specify decending order.
 
-Sort fields can be chained using `+`.
+Sort fields can be chained using comma seperation.
 
 #### Example
 
 `/?sort=-name`: Sorts by name in decending order.
 
-`/?sort=name+-date`: Sorts by name in ascending order and date in decending order.
+`/?sort=name,-date`: Sorts by name in ascending order and date in decending order.
 
 ## Filtering
 
